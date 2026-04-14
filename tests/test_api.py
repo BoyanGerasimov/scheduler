@@ -75,10 +75,15 @@ async def get_patient_id_from_token(token: str):
     return UUID(patient_id)
 
 
-@pytest.mark.asyncio
-async def test_visit_creation_and_overlap(client):
+async def register_doctor_and_patient(client):
     doctor_token, doctor_email = await register_doctor(client)
     patient_token = await register_patient(client, doctor_token, doctor_email)
+    return doctor_token, patient_token
+
+
+@pytest.mark.asyncio
+async def test_visit_creation_and_overlap(client):
+    _, patient_token = await register_doctor_and_patient(client)
 
     starts_at = next_weekday_at(10, 0)
     ends_at = starts_at + timedelta(minutes=30)
@@ -101,8 +106,7 @@ async def test_visit_creation_and_overlap(client):
 
 @pytest.mark.asyncio
 async def test_cancel_visit_success(client):
-    doctor_token, doctor_email = await register_doctor(client)
-    patient_token = await register_patient(client, doctor_token, doctor_email)
+    _, patient_token = await register_doctor_and_patient(client)
 
     starts_at = next_weekday_at(11, 0)
     ends_at = starts_at + timedelta(minutes=20)
@@ -129,8 +133,7 @@ async def test_create_visit_requires_auth(client):
 
 @pytest.mark.asyncio
 async def test_create_visit_less_than_24_hours_fails(client):
-    doctor_token, doctor_email = await register_doctor(client)
-    patient_token = await register_patient(client, doctor_token, doctor_email)
+    _, patient_token = await register_doctor_and_patient(client)
 
     starts_at = datetime.now(timezone.utc) + timedelta(hours=23)
     ends_at = starts_at + timedelta(minutes=20)
@@ -145,8 +148,7 @@ async def test_create_visit_less_than_24_hours_fails(client):
 
 @pytest.mark.asyncio
 async def test_create_visit_outside_working_hours_fails(client):
-    doctor_token, doctor_email = await register_doctor(client)
-    patient_token = await register_patient(client, doctor_token, doctor_email)
+    _, patient_token = await register_doctor_and_patient(client)
 
     starts_at = next_weekday_at(7, 0) + timedelta(days=3)
     ends_at = starts_at + timedelta(minutes=20)
@@ -189,8 +191,7 @@ async def test_permanent_change_must_be_one_week_in_future(client):
 
 @pytest.mark.asyncio
 async def test_cancel_later_than_12_hours_fails(client):
-    doctor_token, doctor_email = await register_doctor(client)
-    patient_token = await register_patient(client, doctor_token, doctor_email)
+    _, patient_token = await register_doctor_and_patient(client)
     patient_id = await get_patient_id_from_token(patient_token)
 
     async with TestSessionLocal() as db:

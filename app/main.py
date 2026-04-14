@@ -33,11 +33,24 @@ async def lifespan(_: FastAPI):
 app = FastAPI(title='Scheduler API', lifespan=lifespan)
 
 
-@app.post('/auth/register/doctor', response_model=TokenResponse)
-async def register_doctor(payload: RegisterDoctorRequest, db: AsyncSession = Depends(get_db)):
-    existing = await db.execute(select(User).where(User.email == payload.email))
+def require_role(user: User, role: Role, message: str) -> None:
+    if user.role != role:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=message)
+
+
+def token_response(user_id) -> TokenResponse:
+    return TokenResponse(access_token=create_access_token(str(user_id)))
+
+
+async def ensure_email_available(db: AsyncSession, email: str) -> None:
+    existing = await db.execute(select(User).where(User.email == email))
     if existing.scalar_one_or_none() is not None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Email already registered')
+
+
+@app.post('/auth/register/doctor', response_model=TokenResponse)
+async def register_doctor(payload: RegisterDoctorRequest, db: AsyncSession = Depends(get_db)):
+    await ensure_email_available(db, payload.email)
 
     user = User(email=payload.email, password_hash=hash_password(payload.password), role=Role.doctor)
     db.add(user)
@@ -48,15 +61,12 @@ async def register_doctor(payload: RegisterDoctorRequest, db: AsyncSession = Dep
     await replace_base_working_hours(db, doctor.id, payload.weekly_schedule)
 
     await db.commit()
-    token = create_access_token(str(user.id))
-    return TokenResponse(access_token=token)
+    return token_response(user.id)
 
 
 @app.post('/auth/register/patient', response_model=TokenResponse)
 async def register_patient(payload: RegisterPatientRequest, db: AsyncSession = Depends(get_db)):
-    existing = await db.execute(select(User).where(User.email == payload.email))
-    if existing.scalar_one_or_none() is not None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Email already registered')
+    await ensure_email_available(db, payload.email)
 
     doctor = await db.execute(select(Doctor).where(Doctor.id == payload.doctor_id))
     if doctor.scalar_one_or_none() is None:
@@ -70,8 +80,7 @@ async def register_patient(payload: RegisterPatientRequest, db: AsyncSession = D
     db.add(patient)
 
     await db.commit()
-    token = create_access_token(str(user.id))
-    return TokenResponse(access_token=token)
+    return token_response(user.id)
 
 
 @app.post('/auth/login', response_model=TokenResponse)
@@ -80,8 +89,7 @@ async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
     user = result.scalar_one_or_none()
     if user is None or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid credentials')
-    token = create_access_token(str(user.id))
-    return TokenResponse(access_token=token)
+    return token_response(user.id)
 
 
 @app.put('/doctors/me/working-hours', response_model=MessageResponse)
@@ -90,8 +98,7 @@ async def update_working_hours(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    if current_user.role != Role.doctor:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Only doctors can update working hours')
+    require_role(current_user, Role.doctor, 'Only doctors can update working hours')
 
     await replace_base_working_hours(db, current_user.id, payload.weekly_schedule)
     await db.commit()
@@ -104,8 +111,7 @@ async def add_temporary_change(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    if current_user.role != Role.doctor:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Only doctors can add temporary changes')
+    require_role(current_user, Role.doctor, 'Only doctors can add temporary changes')
 
     existing = await db.execute(select(TemporaryScheduleChange).where(TemporaryScheduleChange.doctor_id == current_user.id))
     if existing.scalar_one_or_none() is not None:
@@ -128,8 +134,7 @@ async def add_permanent_change(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    if current_user.role != Role.doctor:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Only doctors can add permanent changes')
+    require_role(current_user, Role.doctor, 'Only doctors can add permanent changes')
 
     minimum_date = datetime.now(timezone.utc).date() + timedelta(days=7)
     if payload.effective_from < minimum_date:
@@ -151,8 +156,7 @@ async def create_visit(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    if current_user.role != Role.patient:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Only patients can create visits')
+    require_role(current_user, Role.patient, 'Only patients can create visits')
 
     patient = await ensure_patient_exists(db, current_user.id)
     await validate_visit_rules(db, patient.doctor_id, patient.id, payload.starts_at, payload.ends_at)

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>coursework_report</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="report.css" />
+</head>
+<body>
+<h1 id="документация-на-курсов-проект">Документация на курсов
+проект</h1>
+<h2 id="система-за-записване-на-посещения-при-лични-лекари">Система за
+записване на посещения при лични лекари</h2>
+<p>Боян Герасимов</p>
+<hr />
+<h2 id="ползване-на-api">1. Ползване на API</h2>
+<h3 id="формат-и-достъп">1.1 Формат и достъп</h3>
+<ul>
+<li>Всички операции са достъпни през HTTP API.</li>
+<li>Данните се подават и връщат в JSON формат.</li>
+<li>За защитените операции се използва Bearer token в
+<code>Authorization</code> header.</li>
+</ul>
+<h3 id="основни-входни-и-изходни-структури">1.2 Основни входни и изходни
+структури</h3>
+<h4 id="регистрация-на-лекар">Регистрация на лекар</h4>
+<p>Request:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Dr. Ivan Petrov&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;doctor@example.com&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;password123&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;address&quot;</span><span class="fu">:</span> <span class="st">&quot;Sofia, Mladost 1&quot;</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;weekly_schedule&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;weekday&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;intervals&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span><span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="st">&quot;08:30:00&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="st">&quot;12:00:00&quot;</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span><span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="st">&quot;13:00:00&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="st">&quot;18:30:00&quot;</span><span class="fu">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Response:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;access_token&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;jwt_token&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;token_type&quot;</span><span class="fu">:</span> <span class="st">&quot;bearer&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="регистрация-на-пациент">Регистрация на пациент</h4>
+<p>Request:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Georgi Ivanov&quot;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;patient@example.com&quot;</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;password123&quot;</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;+359888111222&quot;</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;doctor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;doctor_uuid&gt;&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Response:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;access_token&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;jwt_token&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;token_type&quot;</span><span class="fu">:</span> <span class="st">&quot;bearer&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="създаване-на-посещение">Създаване на посещение</h4>
+<p>Request:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;starts_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-05-21T10:00:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ends_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-05-21T10:30:00Z&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Response:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;visit_id&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;doctor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;doctor_id&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patient_id&quot;</span><span class="fu">:</span> <span class="st">&quot;&lt;patient_id&gt;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;starts_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-05-21T10:00:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ends_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-05-21T10:30:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cancelled_by&quot;</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="endpoint-и">1.3 Endpoint-и</h3>
+<p>Публични:</p>
+<ul>
+<li><code>POST /auth/register/doctor</code></li>
+<li><code>POST /auth/register/patient</code></li>
+<li><code>POST /auth/login</code></li>
+</ul>
+<p>Защитени:</p>
+<ul>
+<li><code>PUT /doctors/me/working-hours</code></li>
+<li><code>POST /doctors/me/temporary-working-hours</code></li>
+<li><code>POST /doctors/me/permanent-working-hours</code></li>
+<li><code>POST /patients/me/visits</code></li>
+<li><code>POST /visits/{visit_id}/cancel</code></li>
+<li><code>GET /me/visits</code></li>
+</ul>
+<h3 id="http-кодове-и-съобщения-за-грешки">1.4 HTTP кодове и съобщения
+за грешки</h3>
+<ul>
+<li><code>400 Bad Request</code>
+<ul>
+<li><code>Visit must be created at least 24 hours in advance</code></li>
+<li><code>Visit must be inside doctor working hours</code></li>
+<li><code>Visit overlaps with another visit</code></li>
+<li><code>Visit cannot be cancelled later than 12 hours before start</code></li>
+</ul></li>
+<li><code>401 Unauthorized</code>
+<ul>
+<li><code>Could not validate credentials</code></li>
+</ul></li>
+<li><code>403 Forbidden</code>
+<ul>
+<li>операцията не е позволена за ролята на текущия потребител</li>
+</ul></li>
+<li><code>404 Not Found</code>
+<ul>
+<li><code>Doctor not found</code></li>
+<li><code>Patient not found</code></li>
+<li><code>Visit not found</code></li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="архитектура-на-проекта">2. Архитектура на проекта</h2>
+<h3 id="ключови-класове-структури-и-методи">2.1 Ключови класове,
+структури и методи</h3>
+<ul>
+<li><code>app/main.py</code>
+<ul>
+<li>реализира endpoint-ите и заявките към бизнес логиката</li>
+</ul></li>
+<li><code>app/models.py</code>
+<ul>
+<li>ORM модели: <code>User</code>, <code>Doctor</code>,
+<code>Patient</code>, <code>DoctorWorkingHour</code>,
+<code>TemporaryScheduleChange</code>,
+<code>PermanentScheduleChange</code>, <code>Visit</code></li>
+</ul></li>
+</ul>
+<p><img src="./images/database-diagram.png"
+alt="ER/UML диаграма на базата данни" /> - <code>app/schemas.py</code> -
+входни/изходни DTO структури и базова валидация на данни -
+<code>app/security.py</code> - <code>hash_password()</code>,
+<code>verify_password()</code>, <code>create_access_token()</code>,
+<code>get_current_user()</code> - <code>app/services.py</code> - основни
+бизнес методи и правила при записване/отмяна -
+<code>app/database.py</code> - конфигурация на engine и async сесии -
+<code>app/config.py</code> - конфигурация чрез environment
+променливи</p>
+<h3 id="обосновка-на-архитектурните-решения">2.2 Обосновка на
+архитектурните решения</h3>
+<ul>
+<li>Използвана е слоеста структура (API, бизнес логика, модели/достъп до
+данни), за да се разделят отговорностите.</li>
+<li>Бизнес правилата са концентрирани в сервизен слой, което прави
+логиката по-четима и по-лесна за тестване.</li>
+<li>Използван е JWT за статeless оторизация на защитените
+endpoint-и.</li>
+<li>SQLAlchemy ORM е използван за стандартизиран достъп до PostgreSQL и
+по-лесна поддръжка на моделите.</li>
+</ul>
+<figure>
+<img src="./images/architecture-diagram.png"
+alt="Архитектурна UML диаграма" />
+<figcaption aria-hidden="true">Архитектурна UML диаграма</figcaption>
+</figure>
+<hr />
+<h2 id="самоанализ">3. Самоанализ</h2>
+<h3 id="къде-са-спазени-принципите-за-чист-и-четим-код-solid">3.1 Къде
+са спазени принципите за чист и четим код (SOLID)</h3>
+<ul>
+<li>Отговорностите са разделени по модули (Single Responsibility):
+отделни файлове за API, сигурност, модели, бизнес логика.</li>
+<li>Разширяемостта е добра: могат да се добавят нови endpoint-и и
+правила без промяна на всички модули.</li>
+<li>Използвани са ясни структури за вход/изход чрез Pydantic схеми,
+което подобрява четимостта и надеждността.</li>
+</ul>
+<h3 id="къде-не-са-спазени-напълно">3.2 Къде не са спазени напълно</h3>
+<ul>
+<li>Част от логиката в endpoint-ите все още съдържа проверки, които
+могат допълнително да се изнесат в сервизния слой.</li>
+<li>Няма пълно abstraction ниво за repository pattern между бизнес
+логиката и ORM слоя.</li>
+</ul>
+<h3 id="защо-не-са-спазени-напълно">3.3 Защо не са спазени напълно</h3>
+<ul>
+<li>Проектът е реализиран в рамките на курсова задача и фокусът е върху
+пълно покриване на функционалните изисквания.</li>
+<li>Избран е по-прагматичен подход, за да се гарантира работеща система
+с ясна и стабилна основа.</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,10 @@
+body { font-family: "Times New Roman", serif; line-height: 1.5; max-width: 900px; margin: 40px auto; color: #111; }
+h1,h2,h3,h4 { margin-top: 1.2em; }
+h1 { font-size: 28px; }
+h2 { font-size: 22px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+h3 { font-size: 18px; }
+p, li { font-size: 14px; }
+code, pre { font-family: "Courier New", monospace; font-size: 12px; }
+pre { background: #f6f8fa; padding: 10px; border: 1px solid #ddd; border-radius: 6px; overflow-x: auto; }
+img { max-width: 100%; height: auto; display: block; margin: 16px auto; border: 1px solid #ddd; }
+@page { size: A4; margin: 20mm; }
